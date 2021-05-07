@@ -1,6 +1,6 @@
 package com.raspberry.raspberry.services.bluetooth;
 
-import com.raspberry.raspberry.services.dht.DHTThread;
+import com.raspberry.raspberry.utils.RegexTemplateConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jasypt.encryption.StringEncryptor;
@@ -34,19 +34,24 @@ public class BluetoothService {
         log.info("Bluetooth start");
     }
 
-    public void getIp() throws SocketException {
+    public String getIp() throws SocketException {
         for (Enumeration<NetworkInterface> ifaces =
              NetworkInterface.getNetworkInterfaces();
              ifaces.hasMoreElements(); ) {
             NetworkInterface iface = ifaces.nextElement();
-            System.out.println(iface.getName() + ":");
-            for (Enumeration<InetAddress> addresses =
-                 iface.getInetAddresses();
-                 addresses.hasMoreElements(); ) {
-                InetAddress address = addresses.nextElement();
-                System.out.println("  " + address);
+//            System.out.println(iface.getName() + ":");
+            if (iface.getName().equals("wlp4s0")) {
+                for (Enumeration<InetAddress> addresses =
+                     iface.getInetAddresses();
+                     addresses.hasMoreElements(); ) {
+                    InetAddress address = addresses.nextElement();
+                    if (address.getCanonicalHostName().matches(RegexTemplateConstants.IPV4)) {
+                        return address.getCanonicalHostName();
+                    }
+                }
             }
         }
+        throw new RuntimeException("No find IP");
     }
 
     public String generateEncodedToken(String address) {
