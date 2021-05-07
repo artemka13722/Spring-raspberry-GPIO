@@ -111,6 +111,7 @@ public class GPIOSettingsService {
         gpioSettingsRepository.delete(gpioSettings);
     }
 
+    // TODO: 06.05.2021 пересмотреть метод чтобы прям все показывал 
     public List<SetSettingsDto> getAllSettings() {
         return gpioSettingsRepository.findAll().stream()
                 .map(gpioSettingsDtoTransformService::getSetSettingsDto)
